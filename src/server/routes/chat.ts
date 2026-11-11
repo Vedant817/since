@@ -38,11 +38,12 @@ export function chatRoutes(runtime: Runtime): Hono {
       ok: true,
       mode: runtime.config.mode,
       missingKeys: runtime.config.missingKeys,
+      llmProvider: runtime.config.llm?.provider ?? null,
       searchProvider: runtime.searchService.provider,
-      models: runtime.config.openai
+      models: runtime.config.llm
         ? {
-            fast: runtime.config.openai.fastModel,
-            smart: runtime.config.openai.smartModel,
+            fast: runtime.config.llm.fastModel,
+            smart: runtime.config.llm.smartModel,
           }
         : null,
       userTimezone: runtime.config.userTimezone,

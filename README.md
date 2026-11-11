@@ -33,15 +33,28 @@ it clearly. Use **Start blank** to begin with an empty ledger.
 
 | | Demo mode | Live mode |
 | --- | --- | --- |
-| Trigger | Either `OPENAI_API_KEY` or `TAVILY_API_KEY` is missing | Both keys are present |
-| Search | Built-in CRM/Postgres corpus, no network | Tavily, content-returning search |
+| Trigger | An LLM key or a search key is missing | One LLM key **and** one search key are present |
+| Search | Built-in CRM/Postgres corpus, no network | Tavily or Brave Search (real web search) |
 | Writing | Deterministic templates | Streamed OpenAI-compatible model |
 | Labels | Every source says **demo**; banner and composer say demo | No demo labels |
 | Purpose | Exercise recall, re-verification, grounding, and the ledger without secrets | Real research and current claims |
 
-This repository was built without live credentials. **The live path is implemented but has not
-been executed in this environment.** The deterministic path, unit/integration tests, and replay
-evals are the verified evidence. See [Evaluation](#evaluation) for the exact distinction.
+#### Free alternatives for live mode (no OpenAI key required)
+
+`OPENAI_API_KEY` works, but you can also run live mode with free-tier providers:
+
+| Purpose | Option | Env var | Notes |
+| --- | --- | --- | --- |
+| LLM (recommended free) | [Groq](https://console.groq.com/keys) | `GROQ_API_KEY` | OpenAI-compatible, fast free tier. Defaults: `llama-3.1-8b-instant` (fast) / `llama-3.3-70b-versatile` (smart). |
+| LLM | [OpenRouter](https://openrouter.ai/keys) | `OPENROUTER_API_KEY` | Free `:free` models available (rate-limited); models/availability may vary. |
+| LLM | [Google AI Studio](https://aistudio.google.com/apikey) | `GEMINI_API_KEY` | Gemini via OpenAI-compatible endpoint (free tier, subject to quotas). |
+| LLM | OpenAI | `OPENAI_API_KEY` | Paid; defaults `gpt-4.1-mini` / `gpt-4.1`. |
+| Search (best content) | [Tavily](https://tavily.com) | `TAVILY_API_KEY` | Returns extracted page content (best for grounding). Free tier available. |
+| Search (alternative) | [Brave Search API](https://brave.com/search/api/) | `BRAVE_SEARCH_API_KEY` | Free tier available; uses result descriptions/snippets as content. |
+
+Set one LLM key and one search key in `.env` (see [`.env.example`](.env.example)), then restart `npm run dev`. You can override base URL/models with `OPENAI_BASE_URL`, `MODEL_FAST`, `MODEL_SMART`.
+
+**This repository was built and verified in this environment without live credentials.** The live path (including these provider integrations) is implemented but has not been executed here. Deterministic tests, replay evals, and demo-mode UI checks are the verified evidence. See [Evaluation](#evaluation). Free-tier availability, quotas, and model names are provider-controlled and may change.
 
 ### Try these prompts
 
@@ -95,7 +108,7 @@ Hono server
    ├─ route          fresh | recall | reverify | recall_reverify | clarify
    ├─ resolve date   chrono + IANA timezone + civil-day boundaries
    ├─ recall         SQLite turns, FTS5, range claims
-   ├─ search         Tavily web_search only (skipped for recall)
+   ├─ search         web_search only: Tavily or Brave in live mode (skipped for recall)
    ├─ compare        stored claims ↔ today's sources
    ├─ write          streamed model answer, or deterministic demo answer
    ├─ ground         exact-quote citation gate, drop unsupported sentences
@@ -181,8 +194,9 @@ Search results are cached for **6 hours** for high-volatility queries and **24 h
 
 ## Only one external tool
 
-`web_search` is the agent's only external tool. Tavily is used because it returns page **content**
-in the same response as the result list; there is no second fetch, browser tool, or scraping path.
+`web_search` is the agent's only external tool. In live mode it is backed by **Tavily** (returns
+extracted page content in the same response, best for grounding) or **Brave Search** (free-tier
+alternative using descriptions/snippets). There is no second fetch, browser tool, or scraping path.
 The planner issues one query per entity by default (maximum 8), runs at most 4 in parallel, and
 prefers recent results within the resolved range. In demo mode the same interface is backed by a
 small deterministic corpus.
@@ -264,14 +278,19 @@ Copy `.env.example` to `.env` and fill in what you need.
 | `PORT` | `8787` | API/server port |
 | `DATABASE_PATH` | `./data/since.db` | SQLite file; use `:memory:` for ephemeral runs |
 | `USER_TZ` | `UTC` | Fallback timezone for API clients |
-| `OPENAI_API_KEY` | — | Required for live mode |
-| `OPENAI_BASE_URL` | `https://api.openai.com/v1` | Any OpenAI-compatible `/chat/completions` endpoint |
-| `MODEL_FAST` | `gpt-4.1-mini` | Routing, citation verification, claim extraction/comparison |
-| `MODEL_SMART` | `gpt-4.1` | Streamed fresh-answer synthesis |
-| `TAVILY_API_KEY` | — | Required for live search |
+| `OPENAI_API_KEY` | — | OpenAI LLM key (paid) |
+| `GROQ_API_KEY` | — | Groq LLM key (free tier, OpenAI-compatible) |
+| `OPENROUTER_API_KEY` | — | OpenRouter LLM key (free `:free` models available) |
+| `GEMINI_API_KEY` | — | Google AI Studio key via OpenAI-compatible endpoint |
+| `OPENAI_BASE_URL` | provider default | Override for any OpenAI-compatible `/chat/completions` endpoint |
+| `MODEL_FAST` | provider default | Routing, citation verification, claim extraction/comparison |
+| `MODEL_SMART` | provider default | Streamed fresh-answer synthesis |
+| `TAVILY_API_KEY` | — | Tavily web search (extracted content) |
+| `BRAVE_SEARCH_API_KEY` | — | Brave Search API (descriptions/snippets) |
 
-Live mode is selected only when **both** `OPENAI_API_KEY` and `TAVILY_API_KEY` are present.
-Otherwise the app stays in clearly labeled demo mode.
+Live mode is selected when **one LLM key and one search key** are present. Provider presets set
+sensible default base URLs and models (e.g. Groq → `llama-3.1-8b-instant` / `llama-3.3-70b-versatile`).
+Otherwise the app stays in clearly labeled demo mode. See [`.env.example`](.env.example).
 
 ---
 

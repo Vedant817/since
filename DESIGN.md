@@ -124,9 +124,11 @@ Only for fresh questions, or when there are stored claims to compare. The planne
 per entity by default, up to eight, and runs at most four in parallel. A query includes the resolved
 range label and the relevant attribute (`pricing`, `features`, etc.).
 
-Tavily is the only provider in live mode because it returns page content. That satisfies the “one
-external tool” constraint without a second fetch or browser step. Results are normalized, deduped by
-URL, ranked by provider score plus freshness, and capped at 6–8 sources.
+In live mode the search client is **Tavily** (preferred: returns extracted page content in the same
+response) or **Brave Search** (free-tier alternative: descriptions/snippets as content). This keeps
+to one external tool (`web_search`) without a second fetch or browser step, though Brave provides
+less grounding material than Tavily. Results are normalized, deduped by URL, ranked by provider
+score plus freshness, and capped at 6–8 sources.
 
 The search cache key includes provider, normalized query, date bounds, and result count. TTL is six
 hours for high-volatility queries and 24 hours otherwise.
@@ -263,9 +265,10 @@ date bound, and call order. The search transcript is strict: an unexpected query
 silent live call. The model is `null`, so synthesis follows the deterministic branches. The fixed
 clock is `2026-11-11T04:30:00.000Z`.
 
-The fixture is recorded from the demo corpus today. `record` with live keys would capture live
-Tavily results; replay would then exercise the same code against real page text without needing
-network access. `record` deliberately disables the model so the fixture remains replayable. `live`
+The fixture is recorded from the demo corpus today. `record` with live search keys would capture
+live provider results (e.g. Tavily or Brave); replay would then exercise the same code against that
+recorded text without needing network access. `record` deliberately disables the model so the
+fixture remains replayable. `live`
 is the only mode that exercises the model-written answer and live comparison prompts.
 
 Metrics are deliberately modest:
@@ -338,8 +341,10 @@ FTS5 is enough for a single conversation and keeps the whole state inspectable.
 phrase can resolve differently, quotes can drift, and a re-check can invent a change. The ledger and
 the gate exist to make those failures observable.
 
-**A browser/fetch second tool.** Rejected by the brief and unnecessary: Tavily returns content. A
-second tool would add latency, a new injection surface, and a second cache.
+**A browser/fetch second tool.** Rejected by the brief and unnecessary for the preferred path:
+Tavily returns extracted content. A second tool would add latency, a new injection surface, and a
+second cache. (Brave returns less content, but adding a second fetch tool would violate the one-tool
+constraint and broaden the attack surface.)
 
 **Background re-checks on a timer.** Useful at scale, but it spends API budget without a user
 question and complicates the single-process model. TTLs are used to prioritize checks when asked;

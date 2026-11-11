@@ -38,10 +38,15 @@ const server = serve(
     console.log(
       `  Mode: ${config.mode.toUpperCase()}${
         config.mode === 'demo' && config.missingKeys.length > 0
-          ? ` — add ${config.missingKeys.join(' and ')} to .env for live answers`
+          ? ` — missing ${config.missingKeys.join(' and ')}. For free live mode, set GROQ_API_KEY + (TAVILY_API_KEY or BRAVE_SEARCH_API_KEY) in .env`
           : ''
       }`,
     );
+    if (config.mode === 'live') {
+      console.log(
+        `  Providers: llm=${config.llm?.provider ?? 'none'} search=${config.search?.provider ?? 'demo'}`,
+      );
+    }
     console.log(`  Database: ${config.databasePath}\n`);
   },
 );
