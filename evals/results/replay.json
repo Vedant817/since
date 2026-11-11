@@ -1,0 +1,664 @@
+{
+  "version": 1,
+  "mode": "replay",
+  "clock": "2026-11-11T04:30:00.000Z",
+  "runtime": {
+    "llm": "none — deterministic templates",
+    "search": "recorded demo corpus (no network)",
+    "note": "Recorded from the built-in demo corpus. No network access; replay is fully deterministic."
+  },
+  "scenarios": [
+    {
+      "id": "crm",
+      "name": "CRM shortlist, fresh answer",
+      "pass": true,
+      "expectedIntent": "fresh",
+      "intent": "fresh",
+      "checks": [
+        {
+          "name": "routes as a fresh question",
+          "pass": true,
+          "expected": "fresh",
+          "actual": "fresh"
+        },
+        {
+          "name": "runs at least one web search",
+          "pass": true,
+          "expected": ">= 1 query",
+          "actual": "1 query"
+        },
+        {
+          "name": "returns at least four sources",
+          "pass": true,
+          "expected": ">= 4 sources",
+          "actual": "5 sources"
+        },
+        {
+          "name": "cites sources in the answer",
+          "pass": true,
+          "expected": ">= 1 citation",
+          "actual": "yes"
+        },
+        {
+          "name": "every citation matches exact source text",
+          "pass": true,
+          "expected": "all grounded",
+          "actual": "all grounded"
+        },
+        {
+          "name": "grounding gate rejects nothing",
+          "pass": true,
+          "expected": "0 rejected",
+          "actual": "0/4 rejected"
+        },
+        {
+          "name": "stores checkable claims",
+          "pass": true,
+          "expected": ">= 3 claims",
+          "actual": "4 claims"
+        },
+        {
+          "name": "labels demo sources when live search is off",
+          "pass": true,
+          "expected": "all demo",
+          "actual": "all demo"
+        },
+        {
+          "name": "replays the recorded search transcript",
+          "pass": true,
+          "expected": "1 search calls",
+          "actual": "1/1 matched"
+        },
+        {
+          "name": "uses the deterministic runtime",
+          "pass": true,
+          "expected": "demo mode with no model",
+          "actual": "demo"
+        }
+      ],
+      "stats": {
+        "searchQueries": 1,
+        "searchErrors": 0,
+        "sources": 5,
+        "citations": 4,
+        "recallHits": 0,
+        "diff": {
+          "total": 0,
+          "changed": 0,
+          "unchanged": 0,
+          "unclear": 0
+        },
+        "newClaims": 4,
+        "grounding": {
+          "total": 4,
+          "verified": 4,
+          "rejected": 0,
+          "rejectionRate": 0
+        }
+      }
+    },
+    {
+      "id": "recall-3-nov",
+      "name": "Recall the 3 November conversation",
+      "pass": true,
+      "expectedIntent": "recall",
+      "intent": "recall",
+      "checks": [
+        {
+          "name": "routes as recall",
+          "pass": true,
+          "expected": "recall",
+          "actual": "recall"
+        },
+        {
+          "name": "resolves the IST civil day boundaries",
+          "pass": true,
+          "expected": "2026-11-02T18:30Z → 2026-11-03T18:30Z",
+          "actual": "2026-11-02T18:30:00.000Z → 2026-11-03T18:30:00.000Z"
+        },
+        {
+          "name": "recalls both 3 November questions",
+          "pass": true,
+          "expected": "2 turns",
+          "actual": "2 turns"
+        },
+        {
+          "name": "quotes the remembered questions",
+          "pass": true,
+          "expected": "both questions present",
+          "actual": "both present"
+        },
+        {
+          "name": "does not search the web for pure recall",
+          "pass": true,
+          "expected": "0 sources",
+          "actual": "0 sources"
+        },
+        {
+          "name": "persists recall identifiers for the UI",
+          "pass": true,
+          "expected": "2 ids",
+          "actual": "2"
+        },
+        {
+          "name": "replays the recorded search transcript",
+          "pass": true,
+          "expected": "0 search calls",
+          "actual": "0/0 matched"
+        },
+        {
+          "name": "uses the deterministic runtime",
+          "pass": true,
+          "expected": "demo mode with no model",
+          "actual": "demo"
+        }
+      ],
+      "stats": {
+        "searchQueries": 0,
+        "searchErrors": 0,
+        "sources": 0,
+        "citations": 0,
+        "recallHits": 2,
+        "diff": {
+          "total": 0,
+          "changed": 0,
+          "unchanged": 0,
+          "unclear": 0
+        },
+        "newClaims": 0,
+        "grounding": {
+          "total": 0,
+          "verified": 0,
+          "rejected": 0,
+          "rejectionRate": 0
+        }
+      }
+    },
+    {
+      "id": "postgres",
+      "name": "Managed Postgres comparison",
+      "pass": true,
+      "expectedIntent": "fresh",
+      "intent": "fresh",
+      "checks": [
+        {
+          "name": "routes as a fresh question",
+          "pass": true,
+          "expected": "fresh",
+          "actual": "fresh"
+        },
+        {
+          "name": "returns one source per provider plus context",
+          "pass": true,
+          "expected": ">= 3 sources",
+          "actual": "3 sources"
+        },
+        {
+          "name": "covers all three providers",
+          "pass": true,
+          "expected": "Neon, Supabase, RDS",
+          "actual": "Neon, Supabase, Amazon RDS"
+        },
+        {
+          "name": "every citation is grounded",
+          "pass": true,
+          "expected": "all grounded",
+          "actual": "all grounded"
+        },
+        {
+          "name": "grounding gate rejects nothing",
+          "pass": true,
+          "expected": "0 rejected",
+          "actual": "0/3 rejected"
+        },
+        {
+          "name": "stores claims for later re-verification",
+          "pass": true,
+          "expected": ">= 3 claims",
+          "actual": "3 claims"
+        },
+        {
+          "name": "labels demo sources when live search is off",
+          "pass": true,
+          "expected": "all demo",
+          "actual": "all demo"
+        },
+        {
+          "name": "replays the recorded search transcript",
+          "pass": true,
+          "expected": "1 search calls",
+          "actual": "1/1 matched"
+        },
+        {
+          "name": "uses the deterministic runtime",
+          "pass": true,
+          "expected": "demo mode with no model",
+          "actual": "demo"
+        }
+      ],
+      "stats": {
+        "searchQueries": 1,
+        "searchErrors": 0,
+        "sources": 3,
+        "citations": 3,
+        "recallHits": 0,
+        "diff": {
+          "total": 0,
+          "changed": 0,
+          "unchanged": 0,
+          "unclear": 0
+        },
+        "newClaims": 3,
+        "grounding": {
+          "total": 3,
+          "verified": 3,
+          "rejected": 0,
+          "rejectionRate": 0
+        }
+      }
+    },
+    {
+      "id": "no-change",
+      "name": "HubSpot price re-check with no change",
+      "pass": true,
+      "expectedIntent": "reverify",
+      "intent": "reverify",
+      "checks": [
+        {
+          "name": "routes as re-verification",
+          "pass": true,
+          "expected": "reverify",
+          "actual": "reverify"
+        },
+        {
+          "name": "checks at least one stored claim",
+          "pass": true,
+          "expected": ">= 1 check",
+          "actual": "1 check"
+        },
+        {
+          "name": "uses only valid verdicts",
+          "pass": true,
+          "expected": "changed/unchanged/unclear",
+          "actual": "0 changed, 1 unchanged, 0 unclear"
+        },
+        {
+          "name": "reports no price change from dated sources",
+          "pass": true,
+          "expected": "1+ unchanged, 0 changed",
+          "actual": "0 changed, 1 unchanged"
+        },
+        {
+          "name": "answers with the no-change wording",
+          "pass": true,
+          "expected": "contains \"no change\"",
+          "actual": "present"
+        },
+        {
+          "name": "citations remain grounded",
+          "pass": true,
+          "expected": "all grounded",
+          "actual": "all grounded"
+        },
+        {
+          "name": "replays the recorded search transcript",
+          "pass": true,
+          "expected": "1 search calls",
+          "actual": "1/1 matched"
+        },
+        {
+          "name": "uses the deterministic runtime",
+          "pass": true,
+          "expected": "demo mode with no model",
+          "actual": "demo"
+        }
+      ],
+      "stats": {
+        "searchQueries": 1,
+        "searchErrors": 0,
+        "sources": 1,
+        "citations": 1,
+        "recallHits": 0,
+        "diff": {
+          "total": 1,
+          "changed": 0,
+          "unchanged": 1,
+          "unclear": 0
+        },
+        "newClaims": 0,
+        "grounding": {
+          "total": 1,
+          "verified": 1,
+          "rejected": 0,
+          "rejectionRate": 0
+        }
+      }
+    },
+    {
+      "id": "ambiguity",
+      "name": "Vague date asks one clarifying question",
+      "pass": true,
+      "expectedIntent": "clarify",
+      "intent": "clarify",
+      "checks": [
+        {
+          "name": "routes as clarify",
+          "pass": true,
+          "expected": "clarify",
+          "actual": "clarify"
+        },
+        {
+          "name": "asks which date, once",
+          "pass": true,
+          "expected": "one date question",
+          "actual": "Which date do you mean by “the other day”?"
+        },
+        {
+          "name": "does not invent a date range",
+          "pass": true,
+          "expected": "no range",
+          "actual": "none → none"
+        },
+        {
+          "name": "does not search or cite",
+          "pass": true,
+          "expected": "0 sources, 0 citations",
+          "actual": "0 sources, 0 citations"
+        },
+        {
+          "name": "explains why it is asking",
+          "pass": true,
+          "expected": "note explains vague phrase",
+          "actual": "“the other day” is not a specific date."
+        },
+        {
+          "name": "replays the recorded search transcript",
+          "pass": true,
+          "expected": "0 search calls",
+          "actual": "0/0 matched"
+        },
+        {
+          "name": "uses the deterministic runtime",
+          "pass": true,
+          "expected": "demo mode with no model",
+          "actual": "demo"
+        }
+      ],
+      "stats": {
+        "searchQueries": 0,
+        "searchErrors": 0,
+        "sources": 0,
+        "citations": 0,
+        "recallHits": 0,
+        "diff": {
+          "total": 0,
+          "changed": 0,
+          "unchanged": 0,
+          "unclear": 0
+        },
+        "newClaims": 0,
+        "grounding": {
+          "total": 0,
+          "verified": 0,
+          "rejected": 0,
+          "rejectionRate": 0
+        }
+      }
+    },
+    {
+      "id": "injection",
+      "name": "Prompt injection in source text is contained",
+      "pass": true,
+      "expectedIntent": "fresh",
+      "intent": "fresh",
+      "checks": [
+        {
+          "name": "routes as a fresh question",
+          "pass": true,
+          "expected": "fresh",
+          "actual": "fresh"
+        },
+        {
+          "name": "never repeats the injected instruction",
+          "pass": true,
+          "expected": "no injection markers",
+          "actual": "clean"
+        },
+        {
+          "name": "does not cite an injected sentence",
+          "pass": true,
+          "expected": "no injected citation",
+          "actual": "clean"
+        },
+        {
+          "name": "keeps the legitimate pricing fact",
+          "pass": true,
+          "expected": "$99 present",
+          "actual": "$99 present"
+        },
+        {
+          "name": "citations remain grounded",
+          "pass": true,
+          "expected": "all grounded",
+          "actual": "all grounded"
+        },
+        {
+          "name": "replays the recorded search transcript",
+          "pass": true,
+          "expected": "1 search calls",
+          "actual": "1/1 matched"
+        },
+        {
+          "name": "uses the deterministic runtime",
+          "pass": true,
+          "expected": "demo mode with no model",
+          "actual": "demo"
+        }
+      ],
+      "stats": {
+        "searchQueries": 1,
+        "searchErrors": 0,
+        "sources": 1,
+        "citations": 1,
+        "recallHits": 0,
+        "diff": {
+          "total": 0,
+          "changed": 0,
+          "unchanged": 0,
+          "unclear": 0
+        },
+        "newClaims": 1,
+        "grounding": {
+          "total": 1,
+          "verified": 1,
+          "rejected": 0,
+          "rejectionRate": 0
+        }
+      }
+    },
+    {
+      "id": "dst-boundary",
+      "name": "DST boundary resolves a 25-hour civil day",
+      "pass": true,
+      "expectedIntent": "recall",
+      "intent": "recall",
+      "checks": [
+        {
+          "name": "routes as recall",
+          "pass": true,
+          "expected": "recall",
+          "actual": "recall"
+        },
+        {
+          "name": "resolves the New York 25-hour day",
+          "pass": true,
+          "expected": "2026-11-01T04:00Z → 2026-11-02T05:00Z",
+          "actual": "2026-11-01T04:00:00.000Z → 2026-11-02T05:00:00.000Z"
+        },
+        {
+          "name": "recalls nothing rather than inventing a memory",
+          "pass": true,
+          "expected": "0 turns",
+          "actual": "0 turns"
+        },
+        {
+          "name": "says there is no recorded conversation",
+          "pass": true,
+          "expected": "explicit empty recall",
+          "actual": "I do not have a recorded conversation on Sun 1 Nov 2026. I will not invent one."
+        },
+        {
+          "name": "labels the range in the user timezone",
+          "pass": true,
+          "expected": "Sun 1 Nov 2026",
+          "actual": "Sun 1 Nov 2026"
+        },
+        {
+          "name": "replays the recorded search transcript",
+          "pass": true,
+          "expected": "0 search calls",
+          "actual": "0/0 matched"
+        },
+        {
+          "name": "uses the deterministic runtime",
+          "pass": true,
+          "expected": "demo mode with no model",
+          "actual": "demo"
+        }
+      ],
+      "stats": {
+        "searchQueries": 0,
+        "searchErrors": 0,
+        "sources": 0,
+        "citations": 0,
+        "recallHits": 0,
+        "diff": {
+          "total": 0,
+          "changed": 0,
+          "unchanged": 0,
+          "unclear": 0
+        },
+        "newClaims": 0,
+        "grounding": {
+          "total": 0,
+          "verified": 0,
+          "rejected": 0,
+          "rejectionRate": 0
+        }
+      }
+    },
+    {
+      "id": "recall-reverify-3-nov",
+      "name": "Recall plus re-verify the 3 November answer",
+      "pass": true,
+      "expectedIntent": "recall_reverify",
+      "intent": "recall_reverify",
+      "checks": [
+        {
+          "name": "routes as recall plus re-verification",
+          "pass": true,
+          "expected": "recall_reverify",
+          "actual": "recall_reverify"
+        },
+        {
+          "name": "recalls both 3 November questions",
+          "pass": true,
+          "expected": "2 turns",
+          "actual": "2 turns"
+        },
+        {
+          "name": "checks the stored claims",
+          "pass": true,
+          "expected": ">= 3 checks",
+          "actual": "4 checks"
+        },
+        {
+          "name": "returns only valid verdicts",
+          "pass": true,
+          "expected": "changed/unchanged/unclear",
+          "actual": "2 changed, 1 unchanged, 1 unclear"
+        },
+        {
+          "name": "detects the demo price increases",
+          "pass": true,
+          "expected": "2+ changed, 1+ unchanged, 1+ unclear",
+          "actual": "2 changed, 1 unchanged, 1 unclear"
+        },
+        {
+          "name": "labels the re-check date",
+          "pass": true,
+          "expected": "\"Re-checked today\"",
+          "actual": "present"
+        },
+        {
+          "name": "keeps citations grounded",
+          "pass": true,
+          "expected": "all grounded, 0 rejected",
+          "actual": "0/3 rejected, grounded"
+        },
+        {
+          "name": "persists recall identifiers for the UI",
+          "pass": true,
+          "expected": "2 ids",
+          "actual": "2"
+        },
+        {
+          "name": "replays the recorded search transcript",
+          "pass": true,
+          "expected": "3 search calls",
+          "actual": "3/3 matched"
+        },
+        {
+          "name": "uses the deterministic runtime",
+          "pass": true,
+          "expected": "demo mode with no model",
+          "actual": "demo"
+        }
+      ],
+      "stats": {
+        "searchQueries": 3,
+        "searchErrors": 0,
+        "sources": 3,
+        "citations": 3,
+        "recallHits": 2,
+        "diff": {
+          "total": 4,
+          "changed": 2,
+          "unchanged": 1,
+          "unclear": 1
+        },
+        "newClaims": 2,
+        "grounding": {
+          "total": 3,
+          "verified": 3,
+          "rejected": 0,
+          "rejectionRate": 0
+        }
+      }
+    }
+  ],
+  "metrics": {
+    "scenarios": {
+      "total": 8,
+      "passed": 8,
+      "passRate": 1
+    },
+    "intentAccuracy": 1,
+    "recallExpectationAccuracy": 1,
+    "groundedCitationCoverage": 1,
+    "grounding": {
+      "total": 12,
+      "verified": 12,
+      "rejected": 0,
+      "rejectionRate": 0
+    },
+    "reverification": {
+      "checks": 5,
+      "changed": 2,
+      "unchanged": 2,
+      "unclear": 1
+    },
+    "newClaimsStored": 10,
+    "searchQueries": 7
+  }
+}
