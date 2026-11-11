@@ -1,0 +1,50 @@
+{
+  "name": "since",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "A chat agent with temporal memory. I remember what I told you — and I check if it's still true.",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "concurrently -k -n server,web -c cyan,magenta \"npm:dev:server\" \"npm:dev:web\"",
+    "dev:server": "tsx watch src/server/index.ts",
+    "dev:web": "vite",
+    "build": "npm run check && vite build",
+    "start": "tsx src/server/index.ts",
+    "check": "tsc -p tsconfig.json --noEmit && svelte-check --tsconfig ./tsconfig.json",
+    "test": "vitest run",
+    "eval": "tsx evals/run.ts",
+    "eval:live": "tsx evals/run.ts --mode live",
+    "eval:record": "tsx evals/run.ts --mode record"
+  },
+  "dependencies": {
+    "@fontsource-variable/inter": "^5.3.0",
+    "@fontsource-variable/jetbrains-mono": "^5.3.0",
+    "@fontsource-variable/newsreader": "^5.3.0",
+    "@hono/node-server": "^1.13.8",
+    "better-sqlite3": "^11.10.0",
+    "chrono-node": "^2.7.8",
+    "dompurify": "^3.2.4",
+    "dotenv": "^16.4.7",
+    "hono": "^4.6.20",
+    "marked": "^15.0.7",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^5.0.3",
+    "@types/better-sqlite3": "^7.6.12",
+    "@types/node": "^22.10.7",
+    "autoprefixer": "^10.4.20",
+    "concurrently": "^9.1.2",
+    "postcss": "^8.5.1",
+    "svelte": "^5.19.0",
+    "svelte-check": "^4.1.4",
+    "tailwindcss": "^3.4.17",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3",
+    "vite": "^6.0.7",
+    "vitest": "^3.0.4"
+  }
+}
